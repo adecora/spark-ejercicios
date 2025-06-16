@@ -1,8 +1,7 @@
 import json
 import os
 
-from databricks.connect import DatabricksSession
-from pyspark.sql import SparkSession
+
 from flujos.flujo_diario import FlujoDiario
 
 
@@ -20,9 +19,12 @@ class Launcher:
             # fijamos la variable de entorno necesaria para que lea la config adecuada del fichero .databrickscfg
             os.environ["DATABRICKS_CONFIG_PROFILE"] = self.properties["DATABRICKS_CONFIG_PROFILE"]
 
-        self.spark = DatabricksSession.builder.getOrCreate() \
-            if self.properties["EXECUTION_ENVIRONMENT"] == "databricks"\
-            else SparkSession.builder.getOrCreate()
+        if self.properties["EXECUTION_ENVIRONMENT"] == "databricks":
+            from databricks.connect import DatabricksSession
+            self.spark = DatabricksSession.builder.getOrCreate()
+        else:
+            from pyspark.sql import SparkSession
+            self.spark = SparkSession.builder.getOrCreate()
 
     def flujo_diario(self):
         flujo_diario = FlujoDiario(self.spark, self.properties)
