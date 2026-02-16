@@ -7,7 +7,7 @@ class FlujoDiario:
     ETL diaria
     """
 
-    def __init__(self, spark: SparkSession | DatabricksSession, properties: dict):
+    def __init__(self, spark, properties: dict):
         self.properties = properties
         self.spark = spark
 
@@ -18,10 +18,20 @@ class FlujoDiario:
         # sesiones al mismo tiempo:
         # https://medium.com/analytics-vidhya/spark-session-and-the-singleton-misconception-1aa0eb06535a
 
-        flights_df = self.spark.read\
-            .option("header", "true")\
-            .option("inferSchema", "true")\
+        # storage_account_name = self.properties["STORAGE_ACCOUNT_NAME"]
+
+        # si necesitas leer, lo ideal es usar una
+        # propiedad del fichero de configuración, que podemos llamar por ejemplo STORAGE_ACCOUNT_NAME
+        flights_df = (self.spark.read
+            # Si estás usando Databricks Free Edition, necesitarás indicar la clave de acceso a tu cuenta de almacenamiento
+            # de Azure cada vez que quieras leer , ya que Free Edition no permite editar las propiedades
+            # del cluster para configurar ahí la clave para todas las lecturas.
+            #.option("fs.azure.account.key.tu_storage_account_aquí.dfs.core.windows.net",
+            #        "tu_api_key_aquí")
+            .option("header", "true")
+            .option("inferSchema", "true")
             .csv(self.properties["raw_input_file"])
-        
+        )
+
         flights_df.printSchema()
         print(flights_df.limit(10).toPandas())

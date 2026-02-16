@@ -1,6 +1,7 @@
 {
   "DATABRICKS_CONFIG_PROFILE": "DATAENGINEERING",
   "EXECUTION_ENVIRONMENT": "databricks",
+  "STORAGE_ACCOUNT_NAME": "pon_aquí_tus_iniciales_001sta",
 
   "raw_input_file": "abfss://datos@cursosparkucm.dfs.core.windows.net/flights-jan-apr-2018.csv",
 
