@@ -20,16 +20,16 @@ Personal = "https://alejandrodecora.es"
 
 # https://docs.astral.sh/uv/concepts/projects/dependencies/#dependency-groups
 [dependency-groups]
+dev = [
+        "ipykernel>=7.3.0",
+]
 connect = [
     "databricks-connect==18.2.*",
-    "python-dotenv",
-    "ipykernel>=7.3.0",
 ]
 pyspark = [
     "pyspark==4.1.2",
     "pandas",
     "python-dotenv",
-    "ipykernel>=7.3.0",
     "pytest==8.3.4",
 ]
 
@@ -48,8 +48,8 @@ module-root = ""
 [tool.uv]
 conflicts = [
     [
-        { extra = "connect" },
-        { extra = "pyspark" },
+        { group = "connect" },
+        { group = "pyspark" },
     ],
 ]
 

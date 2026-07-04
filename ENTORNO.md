@@ -27,8 +27,8 @@ El entorno `pyspark` ejecuta spark de forma local en nuestro ordernador, se util
 [tool.uv]
 conflicts = [
     [
-        { extra = "connect" },
-        { extra = "pyspark" },
+        { group = "connect" },
+        { group = "pyspark" },
     ],
 ]
 ```
@@ -42,8 +42,8 @@ Se puede modificar el interprete de `python` desde el IDLE cuando sea necesario.
 Para poder ejecutar `pyspark` de forma local primero es necesario instalar el `jdk17-openjdk` en [entorno.ipynb](./entorno.ipynb). Para generar lo entornos:
 
 ```bash
-$ UV_PROJECT_ENVIRONMENT=.venv-pyspark uv sync --only-group pyspark
-$ UV_PROJECT_ENVIRONMENT=.venv-connect uv sync --only-group connect
+$ UV_PROJECT_ENVIRONMENT=.venv-pyspark uv sync --only-group pyspark --only-group dev
+$ UV_PROJECT_ENVIRONMENT=.venv-connect uv sync --only-group connect --only-group dev
 ```
 
 Para ejecutar los tests:
