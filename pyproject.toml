@@ -1,0 +1,59 @@
+[project]
+name = "spark-flights-etl"
+version = "0.1.0"
+authors = [
+  { name = "Alejandro de Cora", email = "alejandro.de.cora@example.com" }
+]
+description = "Ejemplos de transformaciones sobre vuelos"
+readme = "README.md"
+requires-python = ">=3.12"
+classifiers = [
+	"Programming Language :: Python :: 3",
+	"Operating System :: OS Independent",
+]
+license = "GPL-3.0-or-later"
+license-files = ["LICENSE"]
+
+[project.urls]
+Homepage = "https://github.com/nombrealumno"
+Personal = "https://alejandrodecora.es"
+
+# https://docs.astral.sh/uv/concepts/projects/dependencies/#dependency-groups
+[dependency-groups]
+connect = [
+    "databricks-connect==18.2.*",
+    "python-dotenv",
+    "ipykernel>=7.3.0",
+]
+pyspark = [
+    "pyspark==4.1.2",
+    "pandas",
+    "python-dotenv",
+    "ipykernel>=7.3.0",
+    "pytest==8.3.4",
+]
+
+# https://packaging.python.org/en/latest/tutorials/packaging-projects/#choosing-a-build-backend
+[build-system]
+requires = ["uv_build >= 0.11.23, <0.12.0"]
+build-backend = "uv_build"
+
+# https://docs.astral.sh/uv/concepts/build-backend/#modules
+[tool.uv.build-backend]
+module-name = "spark_flights_etl"
+module-root = ""
+
+# connect y pyspark no pueden coexistir: databricks-connect incluye pyspark
+# https://docs.astral.sh/uv/concepts/resolution/#conflicting-optional-dependencies
+[tool.uv]
+conflicts = [
+    [
+        { extra = "connect" },
+        { extra = "pyspark" },
+    ],
+]
+
+[tool.pytest.ini_options]
+testpaths = "tests"
+pythonpath = "spark_flights_etl"
+# addopts = "--verbose --cov=spark_flights_etl --cov-report html"

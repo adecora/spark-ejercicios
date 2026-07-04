@@ -4,3 +4,7 @@ dist
 .idea
 *pycache*
 *.ipynb_checkpoints
+.env
+*.csv
+.venv*
+.pytest_cache
