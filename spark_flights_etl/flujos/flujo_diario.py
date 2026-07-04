@@ -1,5 +1,4 @@
-from databricks.connect import DatabricksSession
-from pyspark.sql import SparkSession
+from ..etl import Featurizer
 
 
 class FlujoDiario:
@@ -22,11 +21,12 @@ class FlujoDiario:
 
         # si necesitas leer, lo ideal es usar una
         # propiedad del fichero de configuración, que podemos llamar por ejemplo STORAGE_ACCOUNT_NAME
-        flights_df = (self.spark.read
+        flights_df = (
+            self.spark.read
             # Si estás usando Databricks Free Edition, necesitarás indicar la clave de acceso a tu cuenta de almacenamiento
             # de Azure cada vez que quieras leer , ya que Free Edition no permite editar las propiedades
             # del cluster para configurar ahí la clave para todas las lecturas.
-            #.option("fs.azure.account.key.tu_storage_account_aquí.dfs.core.windows.net",
+            # .option("fs.azure.account.key.tu_storage_account_aquí.dfs.core.windows.net",
             #        "tu_api_key_aquí")
             .option("header", "true")
             .option("inferSchema", "true")
@@ -34,4 +34,14 @@ class FlujoDiario:
         )
 
         flights_df.printSchema()
+
+        print("Primeros 10 registros del DataFrame original:")
+        print("=" * 50)
         print(flights_df.limit(10).toPandas())
+
+        # Llamada a Featurizer para preprocesar el DataFrame
+        flights_preprocess = Featurizer.preprocesa(flights_df.limit(10))
+
+        print("Primeros 10 registros del DataFrame preprocesado:")
+        print("=" * 50)
+        print(flights_preprocess.toPandas())

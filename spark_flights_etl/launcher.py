@@ -1,12 +1,11 @@
 import json
 import os
+from pprint import pprint
 
-
-from flujos.flujo_diario import FlujoDiario
+from . import FlujoDiario
 
 
 class Launcher:
-
     def __init__(self, config_path: str):
         """
         Inicializa un lanzador y lo deja preparado para ejecutar cualquier tipo de procesamiento
@@ -15,16 +14,29 @@ class Launcher:
         """
         with open(config_path, "r") as f:
             self.properties = json.load(f)
-            print(self.properties)
+            pprint(self.properties)
+
             # fijamos la variable de entorno necesaria para que lea la config adecuada del fichero .databrickscfg
-            os.environ["DATABRICKS_CONFIG_PROFILE"] = self.properties["DATABRICKS_CONFIG_PROFILE"]
+            os.environ["DATABRICKS_CONFIG_PROFILE"] = self.properties[
+                "DATABRICKS_CONFIG_PROFILE"
+            ]
 
         if self.properties["EXECUTION_ENVIRONMENT"] == "databricks":
             from databricks.connect import DatabricksSession
-            self.spark = DatabricksSession.builder.getOrCreate()
+
+            self.spark = DatabricksSession.builder.profile(
+                self.properties["DATABRICKS_CONFIG_PROFILE"]
+            ).getOrCreate()
+            self.spark.addTag(
+                self.properties.get("SPARK_APP_NAME", "Spark Flights ETL")
+            )
+
         else:
             from pyspark.sql import SparkSession
-            self.spark = SparkSession.builder.getOrCreate()
+
+            self.spark = SparkSession.builder.appName(
+                self.properties.get("SPARK_APP_NAME", "Spark Flights ETL")
+            ).getOrCreate()
 
     def flujo_diario(self):
         flujo_diario = FlujoDiario(self.spark, self.properties)
@@ -32,5 +44,9 @@ class Launcher:
 
 
 if __name__ == "__main__":
-    launcher = Launcher("../config/config.json")
+    from pathlib import Path
+
+    BASE_DIR = Path(__file__).parent.parent
+    print("BASE_DIR", BASE_DIR)
+    launcher = Launcher(BASE_DIR / "config/config.json")
     launcher.flujo_diario()

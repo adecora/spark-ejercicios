@@ -3,9 +3,9 @@ from pathlib import Path
 
 from databricks.connect import DatabricksSession
 
-ROOT_DIR = Path(__file__).parent
+BASE_DIR = Path(__file__).parent
 
-config = json.loads((ROOT_DIR / "config/config.json").read_text())
+config = json.loads((BASE_DIR / "config/config.json").read_text())
 
 print("config", config)
 
