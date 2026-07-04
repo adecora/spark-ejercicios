@@ -48,5 +48,5 @@ if __name__ == "__main__":
 
     BASE_DIR = Path(__file__).parent.parent
     print("BASE_DIR", BASE_DIR)
-    launcher = Launcher(BASE_DIR / "config/config.json")
+    launcher = Launcher(str(BASE_DIR / "config/config.json"))
     launcher.flujo_diario()

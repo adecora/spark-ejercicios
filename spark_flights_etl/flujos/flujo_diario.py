@@ -1,3 +1,6 @@
+import pyspark.sql.functions as F
+import pyspark.sql.types as T
+
 from ..etl import Featurizer
 
 
@@ -9,6 +12,17 @@ class FlujoDiario:
     def __init__(self, spark, properties: dict):
         self.properties = properties
         self.spark = spark
+        self.type_map = {
+            "string": T.StringType(),
+            "integer": T.IntegerType(),
+            "int": T.IntegerType(),
+            "long": T.LongType(),
+            "double": T.DoubleType(),
+            "float": T.FloatType(),
+            "boolean": T.BooleanType(),
+            "date": T.DateType(),
+            "timestamp": T.TimestampType(),
+        }
 
     def run(self):
         # podríamos recuperar la SparkSession activa desde cualquier DF o bien con SparkSession.builder.getOrCreate()
@@ -18,6 +32,12 @@ class FlujoDiario:
         # https://medium.com/analytics-vidhya/spark-session-and-the-singleton-misconception-1aa0eb06535a
 
         # storage_account_name = self.properties["STORAGE_ACCOUNT_NAME"]
+        schema = T.StructType(
+            [
+                T.StructField(field["name"], self.type_map[field["type"]], True)
+                for field in self.properties["input_file_schema"]
+            ]
+        )
 
         # si necesitas leer, lo ideal es usar una
         # propiedad del fichero de configuración, que podemos llamar por ejemplo STORAGE_ACCOUNT_NAME
@@ -29,19 +49,30 @@ class FlujoDiario:
             # .option("fs.azure.account.key.tu_storage_account_aquí.dfs.core.windows.net",
             #        "tu_api_key_aquí")
             .option("header", "true")
-            .option("inferSchema", "true")
+            .schema(schema)
             .csv(self.properties["raw_input_file"])
         )
 
         flights_df.printSchema()
 
-        print("Primeros 10 registros del DataFrame original:")
+        if raw_ingestion_date := self.properties.get("raw_ingestion_date"):
+            flights_df = flights_df.filter(F.col("FlightDate") == raw_ingestion_date)
+
+        print(
+            f"Guardando los datos sin procesar en la tabla «{self.properties['bronze_table']}»"
+        )
         print("=" * 50)
-        print(flights_df.limit(10).toPandas())
+        flights_df.write.mode("overwrite").format("delta").saveAsTable(
+            self.properties["bronze_table"]
+        )
 
         # Llamada a Featurizer para preprocesar el DataFrame
-        flights_preprocess = Featurizer.preprocesa(flights_df.limit(10))
+        flights_preprocess = Featurizer.preprocesa(flights_df)
 
-        print("Primeros 10 registros del DataFrame preprocesado:")
+        print(
+            f"Guardando los datos procesados en la tabla «{self.properties['silver_table']}»"
+        )
         print("=" * 50)
-        print(flights_preprocess.toPandas())
+        flights_preprocess.write.mode("overwrite").format("delta").saveAsTable(
+            self.properties["silver_table"]
+        )

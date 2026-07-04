@@ -4,9 +4,34 @@
   "STORAGE_ACCOUNT_NAME": "masteravdc001sta",
 
   "raw_input_file": "abfss://datos@masteravdc001sta.dfs.core.windows.net/flights-jan-apr-2018.csv",
+  "raw_ingestion_date": "2018-04-20",
+  "input_file_schema": [
+    {"name": "Month", "type": "integer"},
+    {"name": "DayofMonth", "type": "integer"},
+    {"name": "DayOfWeek", "type": "integer"},
+    {"name": "FlightDate", "type": "date"},
+    {"name": "Reporting_Airline", "type": "string"},
+    {"name": "Origin", "type": "string"},
+    {"name": "Dest", "type": "string"},
+    {"name": "CRSDepTime", "type": "integer"},
+    {"name": "DepTime", "type": "integer"},
+    {"name": "DepDelay", "type": "double"},
+    {"name": "TaxiOut", "type": "double"},
+    {"name": "WheelsOff", "type": "integer"},
+    {"name": "WheelsOn", "type": "integer"},
+    {"name": "TaxiIn", "type": "double"},
+    {"name": "CRSArrTime", "type": "integer"},
+    {"name": "ArrTime", "type": "integer"},
+    {"name": "ArrDelay", "type": "double"},
+    {"name": "Cancelled", "type": "double"},
+    {"name": "Diverted", "type": "integer"},
+    {"name": "CarrierDelay", "type": "double"},
+    {"name": "WeatherDelay", "type": "double"},
+    {"name": "NASDelay", "type": "double"},
+    {"name": "SecurityDelay", "type": "double"},
+    {"name": "LateAircraftDelay", "type": "double"}
+  ],
 
-  "raw_ingestion_date": "",
-
-  "bronze_table": "master_pvi001_dbr_premium.bronze.flights",
-  "silver_table": "master_pvi001_dbr_premium.silver.flights"
+  "bronze_table": "masteravdc001dbr.bronze.flights",
+  "silver_table": "masteravdc001dbr.silver.flights"
 }
