@@ -2,7 +2,7 @@
 name = "spark-flights-etl"
 version = "0.1.0"
 authors = [
-  { name = "Alejandro de Cora", email = "alejandro.de.cora@example.com" }
+  { name = "Alejandro de Cora", email = "alejandrodecora@gmail.com" }
 ]
 description = "Ejemplos de transformaciones sobre vuelos"
 readme = "README.md"
@@ -15,7 +15,7 @@ license = "GPL-3.0-or-later"
 license-files = ["LICENSE"]
 
 [project.urls]
-Homepage = "https://github.com/nombrealumno"
+Homepage = "https://github.com/adecora"
 Personal = "https://alejandrodecora.es"
 
 # https://docs.astral.sh/uv/concepts/projects/dependencies/#dependency-groups
